@@ -98,7 +98,7 @@ func SaveTextAsOneFile(path, text string) error {
 }
 
 func SaveTextAsParts(path, text string) error {
-	const maxFileSize = 10 * 1024 * 1024
+	const maxFileSize = 6 * 1024 * 1024
 	baseName := filepath.Base(path)
 	fileBaseName := strings.TrimSuffix(baseName, filepath.Ext(baseName))
 	textBytes := []byte(text)
