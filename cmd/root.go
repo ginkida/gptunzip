@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	prompt "github.com/ginkida/gptunzip/prompt"
 
@@ -11,7 +13,7 @@ import (
 
 var repoPath string
 var isParts bool
-var partSize int 
+var partSize int
 
 var rootCmd = &cobra.Command{
 	Use:   "gptunzip /path/to/git/repository",
@@ -38,7 +40,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		fmt.Println("Unzipped to:", subdirPath)
-		repo, err := prompt.ProcessGitRepo(subdirPath)
+		repo, err := prompt.ProcessGitRepo(subdirPath, filterSourceFiles)
 		if err != nil {
 			fmt.Printf("Error processing git repo: %v\n", err)
 			os.Exit(1)
@@ -53,7 +55,7 @@ var rootCmd = &cobra.Command{
 		saveFunc := prompt.SaveTextAsOneFile
 		if isParts {
 			saveFunc = func(path, text string) error {
-				return prompt.SaveTextAsParts(path, text, partSize) 
+				return prompt.SaveTextAsParts(path, text, partSize)
 			}
 		}
 
@@ -77,4 +79,17 @@ func Execute() {
 		fmt.Printf("Error executing command: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+// filterSourceFiles filters out non-source code files (e.g., images, binaries, etc.)
+func filterSourceFiles(path string) bool {
+	ext := strings.ToLower(filepath.Ext(path))
+	sourceExtensions := []string{".go", ".js", ".ts", ".py", ".java", ".c", ".cpp", ".cs", ".php", ".rb", ".swift", ".html", ".css", ".json", ".xml"}
+
+	for _, validExt := range sourceExtensions {
+		if ext == validExt {
+			return true
+		}
+	}
+	return false
 }
