@@ -59,6 +59,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.Flags().BoolVarP(&isParts, "parts", "p", false, "create small parts for chatGPT")
+	rootCmd.Flags().IntVarP(&partSize, "part-size", "s", 3, "size of each part in MB (only used if --parts is enabled)")
 }
 
 func Execute() {
