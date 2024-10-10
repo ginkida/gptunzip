@@ -46,7 +46,9 @@ var rootCmd = &cobra.Command{
 		}
 		saveFunc := prompt.SaveTextAsOneFile
 		if isParts {
-			saveFunc = prompt.SaveTextAsParts
+			saveFunc = func(path, text string) error {
+		        	return prompt.SaveTextAsParts(path, text, partSize)
+		    	}
 		}
 		if err := saveFunc(subdirPath, output); err != nil {
 			fmt.Printf("Error saving output: %v\n", err)
