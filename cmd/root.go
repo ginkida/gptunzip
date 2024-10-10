@@ -40,7 +40,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		fmt.Println("Unzipped to:", subdirPath)
-		repo, err := prompt.ProcessGitRepo(subdirPath, filterSourceFiles)
+		repo, err := prompt.ProcessGitRepoWithFilter(subdirPath, filterSourceFiles)
 		if err != nil {
 			fmt.Printf("Error processing git repo: %v\n", err)
 			os.Exit(1)
