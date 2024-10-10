@@ -46,7 +46,9 @@ var rootCmd = &cobra.Command{
 		}
 		saveFunc := prompt.SaveTextAsOneFile
 		if isParts {
-			saveFunc = prompt.SaveTextAsParts
+			saveFunc = func(path, text string) error {
+		        	return prompt.SaveTextAsParts(path, text, partSize)
+		    	}
 		}
 		if err := saveFunc(subdirPath, output); err != nil {
 			fmt.Printf("Error saving output: %v\n", err)
@@ -59,6 +61,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.Flags().BoolVarP(&isParts, "parts", "p", false, "create small parts for chatGPT")
+	rootCmd.Flags().IntVarP(&partSize, "part-size", "s", 3, "size of each part in MB (only used if --parts is enabled)")
 }
 
 func Execute() {

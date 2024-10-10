@@ -97,26 +97,26 @@ func SaveTextAsOneFile(path, text string) error {
 	return nil
 }
 
-func SaveTextAsParts(path, text string) error {
-	const maxFileSize = 6 * 1024 * 1024
-	baseName := filepath.Base(path)
-	fileBaseName := strings.TrimSuffix(baseName, filepath.Ext(baseName))
-	textBytes := []byte(text)
-	totalLength := len(textBytes)
-	numFiles := (totalLength-1)/maxFileSize + 1
-	for i := 0; i < numFiles; i++ {
-		start := i * maxFileSize
-		end := start + maxFileSize
-		if end > totalLength {
-			end = totalLength
-		}
-		fileName := fmt.Sprintf("%s_%d.txt", fileBaseName, i+1)
-		if err := os.WriteFile(fileName, textBytes[start:end], 0644); err != nil {
-			return fmt.Errorf("failed to write to file %s: %w", fileName, err)
-		}
-		fmt.Printf("File %s has been saved successfully.\n", fileName)
-	}
-	return nil
+func SaveTextAsParts(path, text string, partSizeMB int) error {
+    maxFileSize := partSizeMB * 1024 * 1024 // Размер частей в байтах
+    baseName := filepath.Base(path)
+    fileBaseName := strings.TrimSuffix(baseName, filepath.Ext(baseName))
+    textBytes := []byte(text)
+    totalLength := len(textBytes)
+    numFiles := (totalLength-1)/maxFileSize + 1
+    for i := 0; i < numFiles; i++ {
+        start := i * maxFileSize
+        end := start + maxFileSize
+        if end > totalLength {
+            end = totalLength
+        }
+        fileName := fmt.Sprintf("%s_%d.txt", fileBaseName, i+1)
+        if err := os.WriteFile(fileName, textBytes[start:end], 0644); err != nil {
+            return fmt.Errorf("failed to write to file %s: %w", fileName, err)
+        }
+        fmt.Printf("File %s has been saved successfully.\n", fileName)
+    }
+    return nil
 }
 
 func ProcessGitRepo(repoPath string) (*GitRepo, error) {
