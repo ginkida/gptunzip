@@ -40,13 +40,15 @@ var rootCmd = &cobra.Command{
 		}
 
 		fmt.Println("Unzipped to:", subdirPath)
-		repo, err := prompt.ProcessGitRepoWithFilter(subdirPath, filterSourceFiles)
+		repo, err := prompt.ProcessGitRepo(subdirPath)
 		if err != nil {
 			fmt.Printf("Error processing git repo: %v\n", err)
 			os.Exit(1)
 		}
 
-		output, err := prompt.OutputGitRepo(repo)
+		filteredRepo := filterGitRepo(repo)
+
+		output, err := prompt.OutputGitRepo(filteredRepo)
 		if err != nil {
 			fmt.Printf("Error generating output: %v\n", err)
 			os.Exit(1)
@@ -71,7 +73,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.Flags().BoolVarP(&isParts, "parts", "p", false, "create small parts for chatGPT")
-	rootCmd.Flags().IntVarP(&partSize, "part-size", "s", 1, "size of each part in MB (only used if --parts is enabled)")
+	rootCmd.Flags().IntVarP(&partSize, "part-size", "s", 6, "size of each part in MB (only used if --parts is enabled)")
 }
 
 func Execute() {
@@ -92,4 +94,16 @@ func filterSourceFiles(path string) bool {
 		}
 	}
 	return false
+}
+
+// filterGitRepo filters the files in the GitRepo to only include source code files
+func filterGitRepo(repo *prompt.GitRepo) *prompt.GitRepo {
+	filteredRepo := &prompt.GitRepo{TotalTokens: repo.TotalTokens, FileCount: 0}
+	for _, file := range repo.Files {
+		if filterSourceFiles(file.Path) {
+			filteredRepo.Files = append(filteredRepo.Files, file)
+			filteredRepo.FileCount++
+		}
+	}
+	return filteredRepo
 }
