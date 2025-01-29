@@ -85,7 +85,7 @@ func Execute() {
 // filterSourceFiles filters out non-source code files (e.g., images, binaries, etc.)
 func filterSourceFiles(path string) bool {
 	ext := strings.ToLower(filepath.Ext(path))
-	sourceExtensions := []string{".go", ".js", ".ts", ".py", ".java", ".c", ".cpp", ".cs", ".php", ".rb", ".swift", ".html", ".css", ".json", ".xml"}
+	sourceExtensions := []string{".go", ".js", ".ts", ".py", ".java", ".c", ".cpp", ".cs", ".php", ".rb", ".swift", ".html", ".css", ".json", ".xml", ".dart", ".yaml", ".lock", ".gradle", ".properties",".pbxproj", ".plist", ".storyboard", ".xib"}
 
 	for _, validExt := range sourceExtensions {
 		if ext == validExt {
